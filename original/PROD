@@ -1,0 +1,508 @@
+pragma ::= (/^ Pragma) identifier
+                (/[  /( argument (/{  /, argument /}) /)  /]) /;
+
+argument ::= ((/[ identifier /=> /]) name)
+           ! ((/[ identifier /=> /]) expression)
+
+declaration ::= object-declaration
+              ! number-declaration
+              ! type-declaration
+              ! subtype-declaration
+              ! subprogram-declaration
+              ! package-declaration
+              ! task-declaraction
+              ! exception-declaration
+              ! renaming-declaration
+
+object-declaration ::= (identifier-list /:
+                        (/[ (/^ Constant) /]) subtype-indication
+                                (/[ /:= expression /]) /;)
+                     ! (identifier-list /:
+                        (/[ (/^ Constant) /]) array-type-definition
+                                (/[ /:= expression /]) /;)
+
+number-declaration ::= identifier-list /:
+                                (/^ Constant) /:= expression /;
+
+identifier-list ::= identifier (/{ /, identifier /})
+
+type-definition ::= enumeration-type-definition
+                  ! integer-type-definition
+                  ! real-type-definition
+                  ! array-type-definition
+                  ! record-type-definition
+                  ! access-type-definition
+                  ! derived-type-definition
+                  ! private-type-definition
+
+type-declaration ::= ((/^ Type) identifier
+                        (/[ discriminant-part /])
+                                (/^ Is) type-definition /;)
+                   ! incomplete-type-declaration
+
+subtype-declaration ::= (/^ Subtype) identifier
+                                (/^ Is) subtype-indication /;
+
+subtype-indication ::= type-mark (/[ constraint /])
+
+type-mark ::= name
+
+constraint ::= range-constraint
+             ! accuracy-constraint
+             ! index-constraint
+             ! discriminant-constraint
+
+derived-type-definition ::= (/^ New) subtype-indication
+
+range-constraint ::= (/^ Range) range
+
+range ::= simple-expression /.. simple-expression
+
+enumeration-type-definition ::=
+                /( enumeration-literal (/{ /, enumeration-literal /}) /)
+
+enumeration-literal ::= identifier ! character-literal
+
+character-literal ::=  /' character /'
+
+integer-type-definition ::= range-constraint
+
+real-type-definition ::= accuracy-constraint
+
+accuracy-constraint ::= floating-point-constraint ! fixed-point-constraint
+
+floating-point-constraint ::= (/^ Digits) static-simple-expression
+                                (/[ range-constraint /])
+
+fixed-point-constraint ::= (/^ Delta) simple-expression
+                                (/[ range-constraint /] )
+
+array-type-definition ::= ((/^ Array) /( index (/{ /, index /}) /)
+                                (/^ Of) subtype-indication)
+                        ! ((/^ Array) index-constraint
+                                (/^ Of) subtype-indication)
+
+index ::= type-mark (/^ Range) /<>
+
+index-constraint ::= /( discrete-range (/{ /, discrete-range /}) /)
+
+discrete-range ::= (type-mark (/[ range-constraint /]))
+                 ! range
+
+record-type-definition ::= (/^ Record) component-list (/^ End) (/^ Record)
+
+component-list ::= ((/{ component-declaration /})
+                        (/[ variant-part /]))
+                 ! (/^ Null) /;
+
+component-declaration ::= (identifier-list /: subtype-indication
+                                (/[ /:= expression /]) /;)
+                        ! (identifier-list /: array-type-definition
+                                (/[  /:= expression /])  /;)
+
+discriminant-part ::= /( discriminant-declaration
+                        (/{ /, discriminant-declaration /}) /)
+
+discriminant-declaration ::= identifier-list /: subtype-indication
+                                (/[ /:= expression /])
+
+discriminant-constraint ::= /( discriminant-specification
+                                (/{ /, discriminant-specification /}) /)
+
+discriminant-specification ::= (/[ name
+                                (/{ | name /}) /=> /])
+                            expression
+
+variant-part ::= (/^ Case) discriminant-name (/^ Is)
+                  (/{ (/^ When) choice (/{ /| choice /}) /=> component-list /})
+                 (/^ End) (/^ Case) /;
+
+choice ::= simple-expression
+         ! discrete-range
+         ! (/^ Others)
+
+access-type-definition ::= (/^ Access) subtype-indication
+
+incomplete-type-declaration ::= (/^ Type) identifier
+                                (/[ discriminant-part /]) /;
+
+declarative-part ::= (/{ declarative-item /})
+                     (/{ representation-specification /})
+                     (/{ program-component /})
+
+declarative-item ::= declaration ! use-clause
+
+program-component ::= body
+                    ! package-declaration
+                    ! task-declaration
+                    ! body-stub
+
+body ::= subprogram-body ! package-body ! task-body
+
+name ::= identifier
+       ! indexed-component
+       ! slice
+       ! selected-component
+       ! attribute
+       ! function-call
+       ! operator-symbol
+
+indexed-component ::= name /( expression (/{ /, expression /}) /)
+
+slice ::= name /( discrete-range /)
+
+selected-component ::= (   name /. identifier)
+                     ! (name /.  (/^ All))
+                     ! (name /. operator-symbol)
+
+attribute ::= name /'  identifier
+
+literal ::=    numeric-literal
+          !  enumeration-literal
+          !  character-string
+          !   (/^ Null)
+
+aggregate ::=     /( component-association
+                       ( /{  /, component-association /}) /)
+
+component-association ::=     (/[ choice (/{ | choice /})  /=>  /])
+                        expression
+
+expression ::= (relation  (/{  (/^ And) relation /}))
+             ! (relation  (/{  (/^ Or) relation /}))
+             ! (relation  (/{  (/^ Xor) relation /}))
+             ! (relation  (/{  (/^ And) ( /^ Then)  relation /}))
+             ! (relation  (/{  (/^ Or)  (/^ Else) relation /}))
+
+relation ::=   (simple-expression
+                (/[ relational-operator simple-expression /]))
+           ! (simple-expression  (/[  (/^ Not) /])  (/^ In) range)
+           ! (simple-expression  (/[  (/^ Not) /])  (/^ In) subtype-indication)
+
+simple-expression ::=  (/[ unary-operator /]) term (/{ adding-operator term /})
+
+term ::= factor  (/{ multiplying-operator factor /})
+
+factor ::= primary (/[ /** primary /])
+
+primary ::=    literal
+          !  aggregate
+          !  name
+          !  allocator
+          !  function-call
+          ! type-conversion
+          !  qualified-expression
+          !  ( /( expression /) )
+
+logical-operator         ::=  (/^ And)
+                           !   (/^ Or)
+                           !   (/^ Xor)
+
+relational-operator      ::= /= !  //= ! /< !  /<= ! /> ! />=
+
+adding-operator          ::= + !  - !  &
+
+unary-operator           ::= + !  - !   (/^ Not)
+
+multiplying-operator     ::= * ! // !   (/^ Mod) !  (/^ Rem)
+
+exponentiating-operator  ::= **
+
+type-conversion ::= type-mark /( expression /)
+
+qualified-expression ::=  ( type-mark  /'    /( expression /)   )
+                       !  (type-mark  /'   aggregate)
+
+allocator ::=   ((/^ New) type-mark (/[  /( expression /)  /]))
+            !  ((/^ New) type-mark aggregate)
+            !  ((/^ New) type-mark discriminant-constraint)
+            !  ((/^ New) type-mark index-constraint)
+
+sequence-of-statements ::= statement (/{ statement /})
+
+statement ::=     ((/{ label /})  simple-statement)
+            !   ((/{ label /}) compound-statement)
+
+simple-statement ::= null-statement
+                   ! assignment-statement
+                   !  exit-statement
+                   ! return-statement
+                   !  goto-statement
+                   ! procedure-call
+                   !  entry-call
+                   ! delay-statement
+                   !  abort-statement
+                   ! raise-statement
+                   !  code-statement
+
+compound-statement ::=    if-statement
+                     !  case-statement
+                     ! loop-statement
+                     !  block
+                     ! accept-statement
+                     !  select-statement
+
+label ::= /<< identifier />>
+
+null-statement ::=  (/^ Null) /;
+
+assignment-statement ::=     name /:= expression /;
+
+if-statement ::=       (/^ If) condition
+                        (/^ Then)     sequence-of-statements
+                       ( /{  (/^ Elsif) condition
+                                 (/^ Then)     sequence-of-statements /})
+                        (/[  (/^ Else)     sequence-of-statements /] )
+                        (/^ End) (/^ If) /;
+
+condition ::= expression
+
+case-statement ::=     (/^ Case) expression  (/^ Is)
+                        (/{  (/^ When) choice (/{ | choice /})
+                                /=>  sequence-of-statements /})
+                        (/^ End) (/^ Case) /;
+
+loop-statement ::=     (/[  identifier ":"  /])
+                       (       /[ iteration-clause /])
+                       basic-loop
+                       (/[  identifier /])  /;
+
+basic-loop ::=   ( /^ Loop)     sequence-of-statements  (  /^ End) (/^ Loop)
+
+iteration-clause ::=    )(/^ For) loop-parameter
+                              (/^ In) ( /[  (/^ Reverse) /] ) discrete-range)
+                   !  ((/^ While) condition)
+
+loop-parameter ::= identifier
+
+block ::=    (/[ identifier ":"  /])
+             (/[  (/^ Declare)     declarative-part /])
+             (/^ Begin)     sequence-of-statements
+             (/[  (/^ Exception)    ( /{ exception-handler /}) /] )
+             (/^ End)  (/[  identifier /])  /;
+
+exit-statement ::=   ( /^ Exit) (/[  name /])
+                                 (/[ ( /^ When)   condition /])  /;
+
+return-statement ::=  (/^ Return) (/[ expression /])  /;
+
+goto-statement ::=  (/^ Goto) name /;
+
+subprogram-declaration ::= (subprogram-specification /;)
+                         ! generic-subprogram-declaration
+                         ! generic-subprogram-instantiation
+
+subprogram-specification ::=  ((/^ Procedure) identifier (/[ formal-part /]))
+                           !  ((/^ Function) designator  (/[ formal-part /])
+                                        (/^ Return) subtype-indication  )
+
+designator ::= identifier !  operator-symbol
+
+operator-symbol ::= character-string
+
+formal-part ::=     /( parameter-declaration
+                        (/{  /;parameter-declaration /}) /)
+
+parameter-declaration ::=    identifier-list  /:  mode subtype-indication
+                                (/[  /:= expression /]  )
+
+mode ::=  (/[  (/^ In) /]) ! (/^ Out) ! ((/^ In)  (/^ Out))
+
+subprogram-body ::=    subprogram-specification  (/^ Is)
+     declarative-part     (/^ Begin)
+     sequence-of-statements   (/[  (/^ Exception)
+     (/{ exception-handler /})  /])    (/^ End) (/[ designator /]) /;
+
+procedure-call ::=     name  (/[  /( actual-parameter-part /)  /]) /;
+
+function-call ::=    (name  /( actual-parameter-part /) )
+                !  (name /(   /))
+
+actual-parameter-part ::=    parameter-association
+                                (/{  /, parameter-association /})
+
+parameter-association ::=     (/[ formal-parameter  /=>  /])
+                     actual-parameter
+
+formal-parameter ::= identifier
+
+actual-parameter ::= expression
+
+package-declaration ::= (package-specification /;)
+                      ! generic-package-declaration
+                      ! generic-package-instantiation
+
+package-specification ::=     (/^ Package) identifier  (/^ Is)
+                        (/{ declarative-item /} )
+                                (/[  (/^ Private)
+                                        (/{ declarative-item /})
+                                        (/{ representation-specification /}) /])
+                        (/^ End)  (/[ identifier /])
+
+package-body ::=     (/^ Package)  (/^ Body) identifier (/^ Is)
+                        declarative-part
+                                (/[  (/^ Begin)     sequence-of-statements
+                                        (/[  (/^ Exception)
+                                            (/{ exception-handler /})  /]) /])
+                        (/^ End)  (/[ identifier /])  /;
+
+private-type-definition ::=  (/[ (/^ Limited) /]) (/^ Private)
+
+use-clause ::=  (/^ Use) name (/{  /,  name /}) /;
+
+renaming-declaration ::= (  identifier  /:  type-mark (/^ Renames) name /;)
+                       ! (identifier  /:   (/^ Exception) ( /^ Renames) name /;)
+                       ! ((/^ Package)    identifier  (/^ Renames) name /;)
+                       ! ((/^ Task)       identifier (/^ Renames) name /;)
+                       ! (subprogram-specification  (/^ Renames)  name /;)
+
+task-declaration ::= task-specification
+
+task-specification ::=     (/^ Task) (/[ (/^ Type) /]) identifier
+                                (/[ (/^ Is)     (/{ entry-declaration /})
+                                 (/{ representation-specification /})
+                                (/^ End) (/[ identifier /])  /]) /;
+
+task-body ::=    (/^ Task) (/^ Body) identifier  (/^ Is)
+                (/[ declarative-part /])
+                (/^ Begin)     sequence-of-statements
+                (/[  (/^ Exception)     ( /{ exception-handler /}) /] )
+                (/^ End)  (/[ identifier /]) /;
+
+entry-declaration ::=   ( /^ Entry) identifier
+                        (/[  /( discrete-range /)  /])
+                        (/[ formal-part /]) /;
+
+entry-call ::=  name (/[  /( actual-parameter-part /)  /]) /;
+
+accept-statement ::=    (/^ Accept) entry-name  (/[ formal-part /])
+                                (/[  (/^ Do)     sequence-of-statements
+                                (/^ End) (/[ identifier /]) /]) /;
+
+delay-statement ::= (/^ Delay) simple-expression /;
+
+select-statement ::= selective-wait
+                   ! conditional-entry-call
+                   !  timed-entry-call
+
+selective-wait ::=    (/^ Select)     (/[ (/^ When) condition  /=>  /])
+                        select-alternative   (/{ (/^ Or) (/[ (/^ When)
+                        condition
+                        /=>  /] )       select-alternative /})
+                               (/[ (/^ Else)     sequence-of-statements /])
+                                (/^ End)  (/^ Select) /;
+
+select-alternative ::=   (accept-statement  (/[ sequence-of-statements /]))
+                        ! (delay-statement  (/[ sequence-of-statements /]))
+                        ! ((/^ Terminate) /;)
+
+conditional-entry-call ::=    (/^ Select)     entry-call
+                               (/[ sequence-of-statements /])
+                               (/^ Else)     sequence-of-statements
+                                (/^ End) (/^ Select) /;
+
+timed-entry-call ::=    (/^ Select)     entry-call
+                                (/[ sequence-of-statements /])
+                        (/^ Or)     delay-statement
+                        (/[ sequence-of-statements /]   )
+                        (/^ End)  (/^ Select) /;
+
+abort-statement ::=  (/^ Abort) name (/{  /,  /^ Task-name /}   )
+
+compilation ::=  (/{ compilation-unit /})
+
+compilation-unit ::=   (context-specification subprogram-declaration)
+                   ! (context-specification subprogram-body)
+                   ! (context-specification package-declaration)
+                   ! (context-specification package-body)
+                   ! (context-specification subunit)
+
+context-specification ::=  (/{ with-clause (/[ use-clause /]) /})
+
+with-clause ::=  (/^ With) name (/{  /,  /^ Unit-name /}) /;
+
+subunit ::=    (/^ Separate)  /( name /) subunit-body
+
+subunit-body ::=    subprogram-body ! package-body !  task-body
+
+body-stub ::=   (subprogram-specification ( /^ Is)  (/^ Separate) /;)
+            ! (package-body identifier   (/^ Is)  (/^ Separate) /;)
+            ! ((/^ Task) (/^ Body) identifier   (/^ Is) (/^ Separate) /;)
+
+exception-declaration ::= identifier-list  /:  (/^ Exception) /;
+
+exception-handler ::=    (/^ When) exception-choice (/{ | exception-choice /})
+                                /=>       sequence-of-statements
+
+exception-choice ::=  name !  (/^ Others)
+
+raise-statement ::=  (/^ Raise)  (/[ name /]) /;
+
+generic-subprogram-declaration ::=    generic-part subprogram-specification /;
+
+generic-package-declaration ::=    generic-part package-specification /;
+
+generic-part ::= (/^ Generic) (/{ generic-formal-parameter /})
+
+generic-formal-parameter ::=  ( parameter-declaration /;)
+                           ! ((/^ Type) identifier (/[ discriminant-part /])
+                                        (/^ Is) generic-type-definition /;)
+                           ! (( /^ With) subprogram-specification
+                                        (/[ (/^ Is) name /])  /;)
+                           ! ((/^ With) subprogram-specification
+                                (/^ Is) /<>  /;)
+
+generic-type-definition ::=   ( /( /<>  /) )
+                          ! ((/^ Range) /<>)
+                          ! ((/^ Delta) /<>)
+                          ! ((/^ Digits) /<>)
+                          ! array-type-definition
+                          ! access-type-definition
+                          ! private-type-definition
+
+generic-subprogram-instantiation ::=   ((/^ Procedure) identifier
+                                       (/^ Is) generic-instantiation /; )
+                                   ! ((/^ Function) designator
+                                     ( /^ Is) generic-instantiation /;  )
+
+generic-package-instantiation ::=     (/^ Package) identifier
+                                       ( /^ Is) generic-instantiation /;
+
+generic-instantiation ::=    (/^ New) name
+                                (/[  /( generic-association
+                                        (/{  /, generic-association /}) /) /])
+
+generic-association ::=    (/[ formal-parameter  /=>  /])
+                        generic-actual-parameter
+
+generic-actual-parameter ::=    expression
+                           !  name
+                           !  subtype-indication
+
+representation-specification ::=    length-specification
+                               !  enumeration-type-representation
+                               ! record-type-representation
+                               !  address-specification
+
+length-specification ::= (/^ For) attribute (/^ Use) expression /;
+
+enumeration-type-representation ::= (/^ For) name (/^ Use) aggregate /;
+
+record-type-representation ::=    (/^ For) name (/^ Use) (/^ Record)
+                                        (/[ alignment-clause /; /])
+                            (/{  name location /; /})
+                                       (/^ End) (/^ Record) /;
+
+location ::= (/^ At) simple-expression (/^ Range) range
+
+alignment-clause ::= (/^ At) (/^ Mod) simple-expression
+
+address-specification ::= (/^ For) name (/^ Use) (/^ At) simple-expression /;
+
+code-statement ::= qualified-expression /;
+
+END
+
+END
+
+END

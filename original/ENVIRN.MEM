@@ -1,0 +1,155 @@
+
+
+
+	           Comparison of ADA Environment Requirements
+	              with UCI Lisp Environment Facilities
+
+
+	                        Stephen Willson
+	                        January 21, 1981
+
+	       This informal paper first compares the ADA  environment
+	  requirements  mentioned in class with the features available
+	  in  UCI  Lisp,  and  then  discusses  how  those   currently
+	  available  features  could  help us to implement the desired
+	  features for an ADA environment, and the impact of  such  an
+	  approach on the design of the ADA interpreter.
+
+	       1.  Run a program or execute an expression at  the  top
+	           level.  This facility exists.
+
+	       2.  Suspend a  running  program  (^C).   This  facility
+	           exists.
+
+	       3.  Indicate where suspended.   This  facility  exists,
+	           though  not  exactly  in  as  pleasant a form as is
+	           desired.
+
+	       4.  At point of suspension:
+
+	           1.  Look at variables.  This facility exists.
+
+	           2.  Perform assignments.  This facility exists.
+
+	           3.  Call a subprogram.  This facility exists.
+
+	           4.  Resume execution.  This facility exists.
+
+	           5.  Return a value from  a  function  (exiting  the
+	               function).  This facility exists.
+
+	           6.  Transfer control via GOTO.  This  facility  not
+	               available.
+
+	           7.  Exit a loop.  This facility not available.
+
+
+	       5.  Call [structure] Editor to edit  a  granule.   This
+	           facility exists.
+
+	       6.  Allow  breakpoints  and  tracing.   This   facility
+	           exists.    "Freeze  universe  on  condition."  This
+	           facility not available.
+
+	       7.  Call file package (input/output/directories).  This
+	           facility exists.
+	                                                        Page 2
+
+
+	       8.  Single Step.  This facility not readily  available.
+
+	       9.  Sending messages.  This facility not available.
+
+	      10.  Getting help.  This facility not available.
+
+
+	       Possiblities for using  current  UCI  Lisp  environment
+	  capablities to create ADA environment desired:
+
+	       1.  If we alter the (print (eval (read))) loop  to  use
+	           our  version of read always, then at any point that
+	           the user may wish to enter  an  ADA  form  he  may,
+	           without  having  to worry about messing up the Lisp
+	           scanner.  We can also enforce this use of our  read
+	           routine  by setting initfn to be our own evaluation
+	           loop.  This means that if a disaster happens  while
+	           an  ADA user is using the ADA environment, he won't
+	           suddenly wind up in  the  Lisp  environment.   This
+	           solves  the  "((worker))"  problem  as mentioned in
+	           class (Eliza).
+
+	       2.  If we binding mechanism similar to  Lisp's,  namely
+	           by  keeping  all  visible  objects and functions on
+	           visible property lists and all hidden  objects  and
+	           functions stored in a dynamic stack, then (perhaps)
+	           the work of implementing the functionality  desired
+	           during breaks can be simplified.
+
+	           Lisp has hooks for allowing the break package to be
+	           called.   If  our  interpreter is rolling along and
+	           wants to handle a break, then our interpreter could
+	           call  the  Lisp  break  package.   This package has
+	           hooks for allowing us to enter  our  own  functions
+	           that  can  modify  the  run-time stack and variable
+	           bindings in the ADA  interpreter.   This,  combined
+	           with  the  use  of  our  own  read  routine,  would
+	           hopefully  allow  us  to  implement  an  ADA  break
+	           package  that  would  give  us the added benefit of
+	           being potentially able to execute  the  Lisp  break
+	           package,  thus  facilitating  the  debugging of our
+	           system.
+
+	       3.  If desired, a facility for getting help and sending
+	           messages  could  be  added  by adding some macro-10
+	           code to manipulate a pseudo-tty.  Suppose I want to
+	           send  a message.  I could type ^C^B, enter the Lisp
+	           break package that  had  been  augmented  with  our
+	           special  features,  send  the  message  via  a  pty
+	           without harming my current  environment,  and  then
+	           continue  execution  of  my  ADA program.  The same
+	           scheme could likewise be used to get help.
+	                                                        Page 3
+
+
+	       4.  Single stepping could simply be an  option  to  the
+	           ADA interpreter.
+
+	       5.  Calls to the file package  would  be  the  same  as
+	           being   able  to  execute  an  arbitrary  (visible)
+	           function during a break.  If we use  our  own  read
+	           routine,  then the user could simply enter the call
+	           and have it  executed  immediately.   Likewise  for
+	           calling  the  Editor.  The Editor would not require
+	           extensive knowledge of the internal structures used
+	           by  the  interpreter  if  the visible functions are
+	           stored on property lists.
+
+
+	       Summary:
+
+	  By writing the ADA interpreter in such a way that it uses 
+
+	       1.  property lists to store  the  visible  objects  and
+	           functions,
+
+	       2.  has hooks  available  via  the  break  package  for
+	           manipulation during breaks,
+
+	       3.  and enforcing the use of our own read routine
+
+
+	  it will be possible to use the features already  present  in
+	  Lisp to
+
+	       1.  debug our interpreter,
+
+	       2.  allow addition of "neat" environment features  like
+	           messages and help,
+
+	       3.  give  us  a  flexible  framework  for  adding   new
+	           features (via break macros),
+
+	       4.  and allow us a  great  deal  of  control  over  the
+	           characters   the  user  might  type  (including  ^C
+	           interrupts).
+

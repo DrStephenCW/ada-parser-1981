@@ -26,7 +26,7 @@ Operator precedence comes for free from the way the grammar is layered (an expre
 
 ## Historical context
 
-In 1980 Ada was brand new. The U.S. Department of Defense had picked it as its standard language in 1979, and the reference manual was still changing; the first ANSI standard didn't arrive until 1983. Tools for it were scarce, and a big open question was what an Ada *programming environment* should look like. My class paper from the same month ([`original/ENVIRN.RNO`](original/ENVIRN.RNO), readable copy in [`docs/`](docs/)) compares the Ada environment requirements with what UCI Lisp already offered: an interactive read-eval-print loop, a structure editor, and data you could inspect while the program ran.
+In 1980 Ada was brand new. The U.S. Department of Defense had picked it as its standard language in 1979, and the reference manual was still changing; the first ANSI standard didn't arrive until 1983. Tools for it were scarce, and a big open question was what an Ada *programming environment* should look like. My class paper from the same month ([`original/ENVIRN.RNO`](original/ENVIRN.RNO), readable copy in [`docs/ENVIRN.md`](docs/ENVIRN.md)) compares the Ada environment requirements with what UCI Lisp already offered: an interactive read-eval-print loop, a structure editor, and data you could inspect while the program ran.
 
 The parser was partly an experiment in that direction: could a Lisp system digest Ada interactively?
 
@@ -112,7 +112,7 @@ These are left exactly as they were in 1981:
 | Path | Contents |
 |---|---|
 | `original/` | The files exactly as recovered from tape. |
-| `docs/` | Readable copies, such as the class paper converted from RUNOFF to Markdown, and a detailed walkthrough of the code. |
+| `docs/` | [`ENVIRN.md`](docs/ENVIRN.md), the class paper converted from RUNOFF to Markdown, and [`walkthrough.md`](docs/walkthrough.md), a detailed walkthrough of the code. |
 
 ### Files in `original/`
 
@@ -123,10 +123,10 @@ These are left exactly as they were in 1981:
 | `GRAMMA.AMB`, `GRAMMA.NFX`, `GRAMMA.SAM`, `GRAMMA.BAK` | Earlier grammar snapshots |
 | `PROD` | The grammar as first typed in, in BNF-style text |
 | `READP.MLI` | Converts `PROD` into Lisp data |
-| `A.MLI` | The abandoned parser-generator approach |
+| `A.MLI`, `A.MIC` | The abandoned parser-generator approach, and the batch script that ran it |
 | `ADALSP.LSP` | Mock-up of Ada translated into Lisp |
 | `CHANGE.MLI` | Unrelated MLISP warm-up (counting ways to make change) |
 | `BUILD.MIC` | Build script |
 | `GRAMMA.EXE` | The saved TOPS-10 program image |
 | `DSKLOG.LOG` | Transcript of a 1981 session |
-| `ENVIRN.RNO`, `ENVIRN.MEM` | Class paper: "Comparison of ADA Environment Requirements with UCI Lisp Environment Facilities" (RUNOFF source and formatted output) |
+| `ENVIRN.RNO`, `ENVIRN.MEM` | Class paper: "Comparison of ADA Environment Requirements with UCI Lisp Environment Facilities" (RUNOFF source and formatted output; readable copy in [`docs/ENVIRN.md`](docs/ENVIRN.md)) |

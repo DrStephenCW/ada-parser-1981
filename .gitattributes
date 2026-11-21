@@ -1,2 +1,2 @@
 # Keep the recovered tape files byte-for-byte: no line-ending or text conversion.
-original/** -text -diff linguist-vendored
+original/** -text
