@@ -107,6 +107,20 @@ These are left exactly as they were in 1981:
 - A few misspelled rule names (`TASK-DECLARACTION`, `IDENTIFIR`) never match anything.
 - Identifiers and numbers are stubbed: an identifier is `A`, `B` or `C`, and a number is `1` or `2`. There's no real scanner.
 
+## What came of it
+
+This weekend project turned out to be a seed that sprouted over several years. The question in the ENVIRN paper, what an interactive environment for Ada should look like, grew into the programming environments project ("Arcturus") at UC Irvine, which went on to produce all kinds of things.
+
+One of them was an interactive Ada interpreter. Some of the people who worked on it went on to found the Irvine Compiler Corporation.
+
+My Ph.D. dissertation came out of that work, and so did at least two others.
+
+My advisor, Richard Taylor (I switched to him from Tim Standish), brought hands-on programming research back to UCI after the ICS Distributed Computing System (DCS) project left. I was his first Ph.D. graduate.
+
+At Professor Taylor's retirement party I sat at a table with another of his former students, Roy Fielding. I told the story of making this Ada parser in a weekend, and Roy had a great story about how Professor Taylor helped him attend the first World Wide Web conference, at CERN in 1994. That's his story to tell; someone should ask him about it.
+
+This repo has the exact bits from 1981 in [`original/`](original/); they were recovered from one of several 9-track magnetic backup tapes I made at UCI.
+
 ## Repository layout
 
 | Path | Contents |
