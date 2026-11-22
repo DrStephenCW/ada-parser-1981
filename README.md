@@ -1,5 +1,7 @@
 # An Ada Parser in UCI Lisp (1981)
 
+_This project, aside from [`original/`](original/), was created with Claude, unknown version, circa August/September 2026.  Claude decoded the backup files on the 9-track tapes and then organized this repo._
+
 This repository holds a small parser for the Ada programming language that I wrote in January 1981, as an undergraduate at UC Irvine. It ran on the university's DEC PDP-10 under TOPS-10, written in **MLISP** (an ALGOL-like surface syntax for Lisp) on top of **UCI Lisp**. The core was written over a single weekend.
 
 The files were recovered in 2026 from old PDP-10 backup tapes. Everything in [`original/`](original/) is exactly as it came off the tape. Nothing has been edited, not even the typos.
